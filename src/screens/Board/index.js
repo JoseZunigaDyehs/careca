@@ -4,11 +4,9 @@ import { useCard } from 'context'
 import Cards from './Cards'
 import { initialStates, reducer, actionTypes } from './reducer'
 
-//TODO: repartir
-//TODO: Separar por jugador
 //TODO: Si es error, cargar cartas al player
 //TODO: minimo 4 cartas
-//TODO: Generar altos para las cartas segun cantidad
+//TODO: Generar altos para las cartas segun cantidad (styles)
 //TODO: Mostrar cartas
 //TODO: llenar jugadores
 function Board() {
