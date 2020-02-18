@@ -1,3 +1,4 @@
+import { getRandomInt } from 'utils'
 export const initialStates = {
   playersIds: [0, 1, 2, 3],
   players: {
@@ -31,14 +32,15 @@ export const initialStates = {
     },
   },
   name: 'LOS PIBES',
-  timeToPlay: 10 * 1000,
-  error: false,
+  isHandOuted: false,
   direction: 'right',
-  turnPlayerId: null,
-  scoreByPlayerId: null,
-  outCards: [],
-  cardPlayingId: null,
+  timeToPlay: 10 * 1000,
   cardsInBoardIds: [],
+  outCards: [],
+  turnPlayerId: null,
+  cardPlayingId: null,
+  scoreByPlayerId: null,
+  error: false,
 }
 export const actionTypes = {
   FILL_DATA: 'FILL_DATA',
@@ -57,20 +59,15 @@ export const reducer = (state, action) => {
       const { cardsIds } = action
       const { playersIds, players } = state
       const nextPlayers = {}
-      let nextCardsInBoardIds = cardsIds
-      const getRandomInt = (min, max) => {
-        min = Math.ceil(min)
-        max = Math.floor(max)
-        return Math.floor(Math.random() * (max - min + 1)) + min
-      }
+      let nextOutCards = cardsIds
       //Reccorro los jugadores y 12 por cada carta de jugador
       playersIds.forEach(playerId => {
         const nextDownBoardCardsIds = []
         const nextUpBoardCardsIds = []
         const nextHandCardsIds = []
         for (let i = 0; i < 12; i++) {
-          const randomIndex = getRandomInt(1, nextCardsInBoardIds.length - 1)
-          const randomId = nextCardsInBoardIds[randomIndex]
+          const randomIndex = getRandomInt(1, nextOutCards.length - 1)
+          const randomId = nextOutCards[randomIndex]
           if (i < 4) {
             nextDownBoardCardsIds.push(randomId)
           } else if (i < 8) {
@@ -78,7 +75,7 @@ export const reducer = (state, action) => {
           } else {
             nextHandCardsIds.push(randomId)
           }
-          nextCardsInBoardIds = nextCardsInBoardIds.filter(x => x !== randomId)
+          nextOutCards = nextOutCards.filter(x => x !== randomId)
         }
         nextPlayers[playerId] = {
           ...players[playerId],
@@ -87,10 +84,15 @@ export const reducer = (state, action) => {
           downBoardCardsIds: nextDownBoardCardsIds,
         }
       })
+      const cardPlayingId = getRandomInt(1, nextOutCards.length - 1)
+      nextOutCards = nextOutCards.filter(id => cardPlayingId !== id)
       return {
         ...state,
+        isHandOuted: true,
         players: nextPlayers,
-        cardsInBoardIds: nextCardsInBoardIds,
+        cardsInBoardIds: [cardPlayingId],
+        cardPlayingId,
+        outCards: nextOutCards,
       }
     }
     case actionTypes.PLAY: {

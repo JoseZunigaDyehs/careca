@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { Container, Typography } from 'components'
 import { useCard } from 'context'
+import Deck from './Deck'
 
+//TODO: PASARLO A ESTILO EN TYPOGRAPHY (VARIANT)
 const colorSuit = {
   Diamons: {
     color: 'error',
@@ -31,6 +33,7 @@ function Card({ id, type }) {
         <Typography {...colorSuit[suit]}>{name}</Typography>
       </Container>
     ),
+    //TODO: Estilo
     downBoard: (
       <Container backgroundColor="gray.3">
         <Typography color="gray.3">{name}</Typography>
@@ -45,14 +48,16 @@ function Cards({ handCardsIds, upBoardCardsIds, downBoardCardsIds }) {
     <Container
       width="100%"
       position="relative"
-      height="70%"
       justifyContent="center"
       alignItems="flex-end"
     >
       <Container>
-        {handCardsIds.map((cardId, i) => (
-          <Card key={i} id={cardId} type="hands" />
-        ))}
+        <Deck
+          backgroundColor={'black'}
+          type="outCards"
+          cardsIdsInGame={handCardsIds}
+          isPlayerCards={true}
+        />
       </Container>
       <Container position="absolute" right="0">
         {upBoardCardsIds.map((cardId, i) => (
@@ -60,9 +65,12 @@ function Cards({ handCardsIds, upBoardCardsIds, downBoardCardsIds }) {
         ))}
       </Container>
       <Container position="absolute" left="0">
-        {downBoardCardsIds.map((cardId, i) => (
-          <Card key={i} id={cardId} type="downBoard" />
-        ))}
+        <Deck
+          isPlayerCards={true}
+          backgroundColor={'gray.2'}
+          type="outCards"
+          cardsIdsInGame={downBoardCardsIds}
+        />
       </Container>
     </Container>
   )

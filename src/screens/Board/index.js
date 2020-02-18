@@ -2,7 +2,30 @@ import React, { useEffect, useReducer } from 'react'
 import { Container, Button, Typography } from 'components'
 import { useCard } from 'context'
 import Cards from './Cards'
+import Deck from './Deck'
 import { initialStates, reducer, actionTypes } from './reducer'
+
+const playerStyles = {
+  0: {
+    top: '0',
+    left: 'calc(50% - 9rem)',
+    transform: 'rotate(180deg)',
+  },
+  1: {
+    top: 'calc(50% - 3rem)',
+    left: '-6rem',
+    transform: 'rotate(90deg)',
+  },
+  2: {
+    bottom: '0',
+    left: 'calc(50% - 9rem)',
+  },
+  3: {
+    top: 'calc(50% - 3rem)',
+    right: '-6rem',
+    transform: 'rotate(-90deg)',
+  },
+}
 
 //TODO: Si es error, cargar cartas al player
 //TODO: minimo 4 cartas
@@ -30,27 +53,14 @@ function Board() {
   const play = nextCardId => {
     dispatch({ type: actionTypes.PLAY, cards, nextCardId })
   }
-  const { playersIds, players } = state
-  const playerStyles = {
-    0: {
-      top: '0',
-      left: 'calc(50% - 9rem)',
-    },
-    1: {
-      top: 'calc(50% - 3rem)',
-      left: '-6rem',
-      transform: 'rotate(90deg)',
-    },
-    2: {
-      bottom: '0',
-      left: 'calc(50% - 9rem)',
-    },
-    3: {
-      top: 'calc(50% - 3rem)',
-      right: '-6rem',
-      transform: 'rotate(-90deg)',
-    },
-  }
+  const {
+    playersIds,
+    players,
+    isHandOuted,
+    cardsInBoardIds,
+    outCards,
+    cardPlayingId,
+  } = state
   return (
     <Container
       width="100%"
@@ -68,7 +78,6 @@ function Board() {
             position="absolute"
             justifyContent="center"
             alignItems="center"
-            flexDirection="column"
             borderRadius="8px"
             padding="2"
             color="white"
@@ -78,6 +87,7 @@ function Board() {
               width="100%"
               alignItems="center"
               justifyContent="space-around"
+              flexDirection="column"
             >
               <Typography fontWeight="700">{players[player].name}</Typography>
               <Typography fontSize="0" marginLeft="1">
@@ -88,18 +98,33 @@ function Board() {
           </Container>
         )
       })}
-      <Button
-        position="absolute"
-        bottom="calc(50% - 2rem)"
-        right="calc(50% - 4rem)"
-        width="8rem"
-        height="4rem"
-        display="flex"
-        justifyContent="center"
-        onClick={startBoard}
-      >
-        REPARTIR
-      </Button>
+      {!isHandOuted ? (
+        <Button
+          position="absolute"
+          bottom="calc(50% - 2rem)"
+          right="calc(50% - 4rem)"
+          width="8rem"
+          height="4rem"
+          display="flex"
+          justifyContent="center"
+          onClick={startBoard}
+        >
+          REPARTIR
+        </Button>
+      ) : (
+        <Container
+          position="absolute"
+          bottom="calc(50% - 2rem)"
+          right="calc(50% - 4rem)"
+        >
+          <Deck type="outCards" cardsIdsInGame={outCards} />
+          <Deck
+            type="cardsInBoardIds"
+            cardsIdsInGame={cardsInBoardIds}
+            cardPlayingId={cardPlayingId}
+          />
+        </Container>
+      )}
     </Container>
   )
 }
