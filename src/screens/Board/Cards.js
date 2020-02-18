@@ -33,7 +33,6 @@ function Card({ id, type }) {
         <Typography {...colorSuit[suit]}>{name}</Typography>
       </Container>
     ),
-    //TODO: Estilo
     downBoard: (
       <Container backgroundColor="gray.3">
         <Typography color="gray.3">{name}</Typography>
@@ -43,7 +42,13 @@ function Card({ id, type }) {
   return Component[type]
 }
 
-function Cards({ handCardsIds, upBoardCardsIds, downBoardCardsIds }) {
+function Cards({
+  handCardsIds,
+  upBoardCardsIds,
+  downBoardCardsIds,
+  player,
+  selectCard,
+}) {
   return (
     <Container
       width="100%"
@@ -51,14 +56,17 @@ function Cards({ handCardsIds, upBoardCardsIds, downBoardCardsIds }) {
       justifyContent="center"
       alignItems="flex-end"
     >
-      <Container>
-        <Deck
-          backgroundColor={'black'}
-          type="outCards"
-          cardsIdsInGame={handCardsIds}
-          isPlayerCards={true}
-        />
-      </Container>
+      {player && (
+        <Container>
+          <Deck
+            backgroundColor={'white'}
+            type="restCardsIds"
+            cardsIdsInGame={handCardsIds}
+            isPlayerCards={true}
+            selectCard={selectCard}
+          />
+        </Container>
+      )}
       <Container position="absolute" right="0">
         {upBoardCardsIds.map((cardId, i) => (
           <Card key={i} id={cardId} type="upBoard" />
@@ -66,10 +74,10 @@ function Cards({ handCardsIds, upBoardCardsIds, downBoardCardsIds }) {
       </Container>
       <Container position="absolute" left="0">
         <Deck
-          isPlayerCards={true}
-          backgroundColor={'gray.2'}
-          type="outCards"
+          backgroundColor={'gray.3'}
+          type="restCardsIds"
           cardsIdsInGame={downBoardCardsIds}
+          isPlayerCards={true}
         />
       </Container>
     </Container>

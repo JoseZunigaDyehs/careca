@@ -15,10 +15,11 @@ import { colorsWithOpacity } from 'utils'
 
 const TypographyStyled = styled.h1`
   margin: 0;
-  ${({ textOverflow }) =>
+  ${({ textOverflow, rotate }) =>
     textOverflow
       ? `white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`
       : ``}
+  ${({ rotate }) => (rotate ? `transform: rotate(${rotate});` : ``)} 
   ${compose(
     space,
     layout,

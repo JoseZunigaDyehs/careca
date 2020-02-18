@@ -11,7 +11,6 @@ import {
   grid,
   typography,
   variant,
-  tra,
 } from 'styled-system'
 import { setProperty, backgroundGradient, colorsWithOpacity } from 'utils'
 const Container = styled.div`

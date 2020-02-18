@@ -1,15 +1,18 @@
-import React, { useEffect, useReducer } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { Container, Button, Typography } from 'components'
 import { useCard } from 'context'
 import Cards from './Cards'
-import Deck from './Deck'
+import RestCards from './RestCards'
 import { initialStates, reducer, actionTypes } from './reducer'
+import { useAuth } from 'context'
 
+// TODO: Each Players calc rotate
+//Esto siempre será igual, hay que recorrer desde el jugador logueado
 const playerStyles = {
+  // From bottom to clock
   0: {
-    top: '0',
+    bottom: '0',
     left: 'calc(50% - 9rem)',
-    transform: 'rotate(180deg)',
   },
   1: {
     top: 'calc(50% - 3rem)',
@@ -17,8 +20,9 @@ const playerStyles = {
     transform: 'rotate(90deg)',
   },
   2: {
-    bottom: '0',
+    top: '0',
     left: 'calc(50% - 9rem)',
+    transform: 'rotate(180deg)',
   },
   3: {
     top: 'calc(50% - 3rem)',
@@ -33,8 +37,36 @@ const playerStyles = {
 //TODO: Mostrar cartas
 //TODO: llenar jugadores
 function Board() {
+  const [orderByLogged, setOrderByLogger] = useState([])
   const { cards, cardsIds } = useCard()
   const [state, dispatch] = useReducer(reducer, initialStates)
+  const {
+    user: { id: idLogged },
+  } = useAuth()
+  const {
+    playersIds,
+    players,
+    isPlaying,
+    cardsInBoardIds,
+    restCardsIds,
+    cardPlayedId,
+    playingId,
+  } = state
+
+  useEffect(() => {
+    const indexLogged = playersIds.findIndex(id => id === idLogged)
+    const nextOrderByLogged = []
+    let isLoggedFinded = false
+    //Desde el indexLogged para adelante
+    for (let index = indexLogged; index < playersIds.length; index++) {
+      nextOrderByLogged.push(playersIds[index])
+    }
+    //Hasta que se tope con el indexLogged
+    for (let index = 0; index < indexLogged; index++) {
+      nextOrderByLogged.push(playersIds[index])
+    }
+    setOrderByLogger(nextOrderByLogged)
+  }, [])
 
   useEffect(() => {
     dispatch({
@@ -44,23 +76,21 @@ function Board() {
       },
     })
   }, [cards, cardsIds])
+  //Reparte cartas
   const startBoard = () => {
     dispatch({ type: actionTypes.START_BOARD, cardsIds })
   }
-
-  const changeTurn = () => {}
-
-  const play = nextCardId => {
-    dispatch({ type: actionTypes.PLAY, cards, nextCardId })
+  const selectCard = id => {
+    dispatch({ type: actionTypes.SELECT_CARD, id })
   }
-  const {
-    playersIds,
-    players,
-    isHandOuted,
-    cardsInBoardIds,
-    outCards,
-    cardPlayingId,
-  } = state
+  const played = nextCardId => {
+    dispatch({ type: actionTypes.PLAYED, cards, nextCardId })
+  }
+
+  //TODO: Tengo los id de los jugadores y sus posiciones
+  // Por Id de logueado le muestro sus cartas, si no las escondo
+  // Del ID logueado hacia adelante se pintan los estilos
+  // desde abajo hacia la manecilla del reloj
   return (
     <Container
       width="100%"
@@ -69,7 +99,8 @@ function Board() {
       backgroundColor="primary.0"
       position="relative"
     >
-      {playersIds.map((player, i) => {
+      {/* Uso el {i} para los estilos  */}
+      {orderByLogged.map((player, i) => {
         const { name, crew, ...cards } = players[player]
         return (
           <Container
@@ -89,16 +120,26 @@ function Board() {
               justifyContent="space-around"
               flexDirection="column"
             >
-              <Typography fontWeight="700">{players[player].name}</Typography>
-              <Typography fontSize="0" marginLeft="1">
+              <Typography
+                fontWeight="700"
+                position="relative"
+                //rotate={i === 2 ? '180deg' : 'none'}
+              >
+                {players[player].name}
+              </Typography>
+              <Typography
+                fontSize="0"
+                marginLeft="1"
+                //rotate={i === 2 ? '180deg' : 'none'}
+              >
                 {players[player].crew}
               </Typography>
             </Container>
-            <Cards {...cards} />
+            <Cards player={i === 0} {...cards} />
           </Container>
         )
       })}
-      {!isHandOuted ? (
+      {!isPlaying ? (
         <Button
           position="absolute"
           bottom="calc(50% - 2rem)"
@@ -112,18 +153,11 @@ function Board() {
           REPARTIR
         </Button>
       ) : (
-        <Container
-          position="absolute"
-          bottom="calc(50% - 2rem)"
-          right="calc(50% - 4rem)"
-        >
-          <Deck type="outCards" cardsIdsInGame={outCards} />
-          <Deck
-            type="cardsInBoardIds"
-            cardsIdsInGame={cardsInBoardIds}
-            cardPlayingId={cardPlayingId}
-          />
-        </Container>
+        <RestCards
+          restCardsIds={restCardsIds}
+          cardsInBoardIds={cardsInBoardIds}
+          cardPlayedId={cardPlayedId}
+        />
       )}
     </Container>
   )

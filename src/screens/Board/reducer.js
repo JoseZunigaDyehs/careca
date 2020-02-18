@@ -32,20 +32,22 @@ export const initialStates = {
     },
   },
   name: 'LOS PIBES',
-  isHandOuted: false,
+  isPlaying: false, //NOSE
   direction: 'right',
   timeToPlay: 10 * 1000,
   cardsInBoardIds: [],
-  outCards: [],
-  turnPlayerId: null,
-  cardPlayingId: null,
+  restCardsIds: [],
+  playingId: null, // ID Jugador en Juego
+  cardSelectId: null, //Carta seleccionada
+  cardPlayedId: null, //ID Carta en juego
   scoreByPlayerId: null,
   error: false,
 }
 export const actionTypes = {
   FILL_DATA: 'FILL_DATA',
   START_BOARD: 'START_BOARD',
-  PLAY: 'PLAY',
+  PLAYED: 'PLAYED',
+  SELECT_CARD: 'SELECT_CARD',
 }
 export const reducer = (state, action) => {
   switch (action.type) {
@@ -59,15 +61,15 @@ export const reducer = (state, action) => {
       const { cardsIds } = action
       const { playersIds, players } = state
       const nextPlayers = {}
-      let nextOutCards = cardsIds
+      let nextrestCardsIdsIds = cardsIds
       //Reccorro los jugadores y 12 por cada carta de jugador
       playersIds.forEach(playerId => {
         const nextDownBoardCardsIds = []
         const nextUpBoardCardsIds = []
         const nextHandCardsIds = []
         for (let i = 0; i < 12; i++) {
-          const randomIndex = getRandomInt(1, nextOutCards.length - 1)
-          const randomId = nextOutCards[randomIndex]
+          const randomIndex = getRandomInt(1, nextrestCardsIdsIds.length - 1)
+          const randomId = nextrestCardsIdsIds[randomIndex]
           if (i < 4) {
             nextDownBoardCardsIds.push(randomId)
           } else if (i < 8) {
@@ -75,7 +77,7 @@ export const reducer = (state, action) => {
           } else {
             nextHandCardsIds.push(randomId)
           }
-          nextOutCards = nextOutCards.filter(x => x !== randomId)
+          nextrestCardsIdsIds = nextrestCardsIdsIds.filter(x => x !== randomId)
         }
         nextPlayers[playerId] = {
           ...players[playerId],
@@ -84,24 +86,27 @@ export const reducer = (state, action) => {
           downBoardCardsIds: nextDownBoardCardsIds,
         }
       })
-      const cardPlayingId = getRandomInt(1, nextOutCards.length - 1)
-      nextOutCards = nextOutCards.filter(id => cardPlayingId !== id)
+      const cardPlayedId = getRandomInt(1, nextrestCardsIdsIds.length - 1)
+      nextrestCardsIdsIds = nextrestCardsIdsIds.filter(
+        id => cardPlayedId !== id,
+      )
       return {
         ...state,
-        isHandOuted: true,
+        isPlaying: true,
         players: nextPlayers,
-        cardsInBoardIds: [cardPlayingId],
-        cardPlayingId,
-        outCards: nextOutCards,
+        cardsInBoardIds: [cardPlayedId],
+        cardPlayedId,
+        restCardsIds: nextrestCardsIdsIds,
       }
     }
-    case actionTypes.PLAY: {
+    case actionTypes.PLAYED: {
       const { nextCardId, cards } = action
-      const { cardPlayingId, turnPlayerId, direction } = state
-      const { name } = cards[cardPlayingId]
-      let nextTurnPlayerId = turnPlayerId
+      const { cardPlayedId, playingId, direction } = state
+      const { name } = cards[cardPlayedId]
+      let nextPlayingId = playingId
       let nextDirection = direction
       let error = false
+      //RULES
       switch (nextCardId) {
         case 'A': {
           if (name !== 'A' || name !== 'Joker' || name !== '2') {
@@ -214,7 +219,14 @@ export const reducer = (state, action) => {
         error,
         timeToPlay: 3000,
         direction: nextDirection,
-        turnPlayerId: error ? turnPlayerId : nextTurnPlayerId,
+        playingId: error ? playingId : nextPlayingId,
+      }
+    }
+    case actionTypes.SELECT_CARD: {
+      const { id } = action
+      return {
+        ...state,
+        cardSelectId: id,
       }
     }
     default: {

@@ -21,12 +21,13 @@ const colorSuit = {
 function Deck({
   type,
   cardsIdsInGame,
-  cardPlayingId,
+  cardPlayedId,
   isPlayerCards,
   backgroundColor = 'secondary.0',
+  selectCard,
 }) {
   const { cards, cardsIds } = useCard()
-  if (type === 'outCards' && cardsIdsInGame.length > 0) {
+  if (type === 'restCardsIds' && cardsIdsInGame.length > 0) {
     return (
       <Container
         width={isPlayerCards ? '1.5rem' : '3rem'}
@@ -37,7 +38,7 @@ function Deck({
   } else {
     return cardsIdsInGame.map((cardId, index) => {
       const { name, suit } = cards[cardId]
-      if (cardPlayingId === cardId) {
+      if (cardPlayedId === cardId) {
         return (
           <Container
             width="3rem"
@@ -45,6 +46,7 @@ function Deck({
             backgroundColor="white"
             position="relative"
             zIndex="10"
+            onClick={selectCard}
           >
             <Typography color={colorSuit[suit]}>{name}</Typography>
           </Container>
