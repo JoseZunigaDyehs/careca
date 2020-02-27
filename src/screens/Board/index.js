@@ -1,35 +1,11 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { Container, Button, Typography } from 'components'
+import { Container, Button, Typography, BoardWrapper } from 'components'
 import { useCard } from 'context'
 import Cards from './Cards'
+import Names from './Names'
 import RestCards from './RestCards'
 import { initialStates, reducer, actionTypes } from './reducer'
 import { useAuth } from 'context'
-
-// TODO: Each Players calc rotate
-//Esto siempre será igual, hay que recorrer desde el jugador logueado
-const playerStyles = {
-  // From bottom to clock
-  0: {
-    bottom: '0',
-    left: 'calc(50% - 9rem)',
-  },
-  1: {
-    top: 'calc(50% - 3rem)',
-    left: '-6rem',
-    transform: 'rotate(90deg)',
-  },
-  2: {
-    top: '0',
-    left: 'calc(50% - 9rem)',
-    transform: 'rotate(180deg)',
-  },
-  3: {
-    top: 'calc(50% - 3rem)',
-    right: '-6rem',
-    transform: 'rotate(-90deg)',
-  },
-}
 
 //TODO: Si es error, cargar cartas al player
 //TODO: minimo 4 cartas
@@ -91,6 +67,7 @@ function Board() {
   // Por Id de logueado le muestro sus cartas, si no las escondo
   // Del ID logueado hacia adelante se pintan los estilos
   // desde abajo hacia la manecilla del reloj
+  console.log('state ===> ', state)
   return (
     <Container
       width="100%"
@@ -99,44 +76,21 @@ function Board() {
       backgroundColor="primary.0"
       position="relative"
     >
-      {/* Uso el {i} para los estilos  */}
+      {/* Uso el {i} como position para los estilos  */}
       {orderByLogged.map((player, i) => {
         const { name, crew, ...cards } = players[player]
         return (
-          <Container
-            height="6rem"
-            width="18rem"
-            position="absolute"
-            justifyContent="center"
-            alignItems="center"
-            borderRadius="8px"
-            padding="2"
-            color="white"
-            {...playerStyles[i]}
-          >
+          <BoardWrapper key={i} position={i}>
             <Container
               width="100%"
               alignItems="center"
               justifyContent="space-around"
               flexDirection="column"
             >
-              <Typography
-                fontWeight="700"
-                position="relative"
-                //rotate={i === 2 ? '180deg' : 'none'}
-              >
-                {players[player].name}
-              </Typography>
-              <Typography
-                fontSize="0"
-                marginLeft="1"
-                //rotate={i === 2 ? '180deg' : 'none'}
-              >
-                {players[player].crew}
-              </Typography>
+              <Names player={player} position={i} players={players} />
             </Container>
-            <Cards player={i === 0} {...cards} />
-          </Container>
+            {isPlaying && <Cards player={i === 0} {...cards} />}
+          </BoardWrapper>
         )
       })}
       {!isPlaying ? (

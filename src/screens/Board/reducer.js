@@ -50,6 +50,7 @@ export const actionTypes = {
   SELECT_CARD: 'SELECT_CARD',
 }
 export const reducer = (state, action) => {
+  console.log(state)
   switch (action.type) {
     case actionTypes.FILL_DATA: {
       return {
@@ -90,6 +91,7 @@ export const reducer = (state, action) => {
       nextrestCardsIdsIds = nextrestCardsIdsIds.filter(
         id => cardPlayedId !== id,
       )
+      debugger
       return {
         ...state,
         isPlaying: true,

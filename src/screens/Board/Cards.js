@@ -3,34 +3,18 @@ import { Container, Typography } from 'components'
 import { useCard } from 'context'
 import Deck from './Deck'
 
-//TODO: PASARLO A ESTILO EN TYPOGRAPHY (VARIANT)
-const colorSuit = {
-  Diamons: {
-    color: 'error',
-  },
-  Clubs: {
-    color: 'black',
-  }, //Trebol
-  Hearts: {
-    color: 'error',
-  },
-  Spades: {
-    color: 'black',
-  }, //Pica
-}
-
 function Card({ id, type }) {
   const { cards } = useCard()
   const { name, suit } = cards[id]
   const Component = {
     hands: (
       <Container>
-        <Typography {...colorSuit[suit]}>{name}</Typography>
+        <Typography textStyle={suit}>{name}</Typography>
       </Container>
     ),
     upBoard: (
       <Container>
-        <Typography {...colorSuit[suit]}>{name}</Typography>
+        <Typography textStyle={suit}>{name}</Typography>
       </Container>
     ),
     downBoard: (
@@ -56,6 +40,7 @@ function Cards({
       justifyContent="center"
       alignItems="flex-end"
     >
+      {/* Cartas del jugador */}
       {player && (
         <Container>
           <Deck

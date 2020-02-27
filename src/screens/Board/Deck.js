@@ -2,27 +2,12 @@ import React from 'react'
 import { Container, Typography } from 'components'
 import { useCard } from 'context'
 
-const colorSuit = {
-  Diamons: {
-    color: 'error',
-  },
-  Clubs: {
-    color: 'black',
-  }, //Trebol
-  Hearts: {
-    color: 'error',
-  },
-  Spades: {
-    color: 'black',
-  }, //Pica
-}
-//Mazo
-//Distribuido por type
+//Mazo, distribuido por type
 function Deck({
   type,
   cardsIdsInGame,
   cardPlayedId,
-  isPlayerCards,
+  isPlayerCards = false,
   backgroundColor = 'secondary.0',
   selectCard,
 }) {
@@ -47,13 +32,16 @@ function Deck({
             position="relative"
             zIndex="10"
             onClick={selectCard}
+            key={index}
           >
-            <Typography color={colorSuit[suit]}>{name}</Typography>
+            <Typography textStyle={suit}>{name}</Typography>
           </Container>
         )
       } else {
         return (
-          <Container width="3rem" height="6rem" backgroundColor="secondary.0" />
+          <Container width="3rem" height="6rem" backgroundColor="secondary.0">
+            {name}
+          </Container>
         )
       }
     })

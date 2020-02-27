@@ -20,6 +20,18 @@ const sizes = [45, 60, 64, 70, 100, 224, 360]
 const breakpoints = [`1279px`, `1439px`, `1919px`, `3839px`]
 
 const textStyles = {
+  Diamons: {
+    color: colors.error,
+  },
+  Clubs: {
+    color: 'black',
+  }, //Trebol
+  Hearts: {
+    color: colors.error,
+  },
+  Spades: {
+    color: 'black',
+  }, //Pica
   specialTitle: {
     fontWeight: fontWeights[2],
     fontSize: fontSizes[6],

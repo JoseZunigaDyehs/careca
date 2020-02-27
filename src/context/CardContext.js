@@ -9,6 +9,10 @@ function CardProvider({ children }) {
       1: 'Clubs', //Trebol
       2: 'Hearts',
       3: 'Spades', //Pica
+      4: 'Diamons',
+      5: 'Clubs', //Trebol
+      6: 'Hearts',
+      7: 'Spades', //Pica
     },
     cardTypes: {
       1: 'A',
@@ -32,8 +36,9 @@ function CardProvider({ children }) {
     const { suitNames, cardTypes } = state
     function getCards() {
       const cards = {}
-      const suits = [0, 13, 26, 39]
+      const suits = [0, 13, 26, 39, 52, 65, 78, 91]
       const cardsIds = []
+      //POR MAZO
       suits.forEach((suit, index) => {
         for (var i = 1; i < 14; i++) {
           const id = suit + i
@@ -48,6 +53,7 @@ function CardProvider({ children }) {
         cards[id] = { id, name: 'Joker', suit: suitNames[index] }
         cardsIds.push(id)
       })
+      debugger
       setState(prevState => ({
         ...prevState,
         cards,
