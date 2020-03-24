@@ -53,7 +53,6 @@ function CardProvider({ children }) {
         cards[id] = { id, name: 'Joker', suit: suitNames[index] }
         cardsIds.push(id)
       })
-      debugger
       setState(prevState => ({
         ...prevState,
         cards,
